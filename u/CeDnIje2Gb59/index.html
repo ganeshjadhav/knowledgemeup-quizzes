@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"><title>KnowledgeMeUp</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0B6E69">
+<link rel="apple-touch-icon" href="../../icons/icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<style>body{margin:0;background:#F6F7F9;color:#111827;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:480px;margin:0 auto;min-height:100vh;padding:24px 16px;display:flex;flex-direction:column;gap:14px}h1{margin:0;font-size:28px}
+.go{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:10px;background:#0B6E69;color:#fff;font-weight:600;font-size:17px;text-decoration:none}
+.go.alt{background:#fff;color:#0B6E69;border:2px solid #0B6E69}button.go{font-family:inherit;cursor:pointer;width:100%}
+.old{display:block;padding:12px 14px;border:1px solid #E3E7ED;border-radius:10px;background:#fff;color:#0B4F4B;text-decoration:none;font-weight:600}
+.mut{color:#4B5563;font-size:14px}.logo{display:block;width:170px;max-width:60%;margin:0 auto}</style></head><body><main>
+<img class="logo" src="../../icons/logo.webp" alt="KnowledgeMeUp">
+<h1>Good day, Ishita.</h1><p class="mut">Your latest quiz and puzzles are ready.</p>
+<a class="go" href="2026-11-21-8/">Take the Knowledge Quiz</a><a class="go alt" href="p/2026-11-21-8/">Take the Visual Quiz</a>
+<button id="rem" class="go alt" type="button" hidden>Remind me when a quiz is ready</button>
+</main><script>/* Reminders: ask the phone for permission, get its notification address and post it to the results inbox like a quiz result.
+   The server picks it up on its next pull and uses it to nudge after each quiz email. Works only where the browser supports push
+   (Chrome on Android; on iPhone only after Add to Home Screen). Nothing here is needed for the quiz itself. */
+var KUPPUSH = (function(){
+  var LS = "kup_push";
+  function ok(){ return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; }
+  function get(){ try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch(e){ return {}; } }
+  function put(v){ try { localStorage.setItem(LS, JSON.stringify(v)); } catch(e){} }
+  function key(b64){ var p = "=".repeat((4 - b64.length % 4) % 4), s = atob((b64 + p).replace(/-/g,"+").replace(/_/g,"/")), a = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+  function send(c, sub, on){
+    return fetch(c.inbox, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify({v:1, type:"push", u:c.token, on:on, sub:sub})});
+  }
+  function ready(c){ return ok() && !!c.key && !!c.inbox && !!c.token; }
+  function state(c){      // "off", "on", "blocked" or "unsupported"
+    if (!ready(c)) return "unsupported";
+    if (Notification.permission === "denied") return "blocked";
+    return (Notification.permission === "granted" && get().on) ? "on" : "off";
+  }
+  function enable(c, done){
+    Notification.requestPermission().then(function(p){
+      if (p !== "granted") throw new Error("denied");
+      return navigator.serviceWorker.ready;
+    }).then(function(reg){
+      return reg.pushManager.getSubscription().then(function(s){ return s || reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:key(c.key)}); });
+    }).then(function(sub){ return send(c, sub.toJSON(), true).then(function(){ put({on:true, at:Date.now()}); done && done(true); }); })
+      .catch(function(){ done && done(false); });
+  }
+  function refresh(c){    // phones rotate addresses now and then: quietly send the current one about once a week
+    if (state(c) !== "on" || Date.now() - (get().at || 0) < 7 * 864e5) return;
+    navigator.serviceWorker.ready.then(function(reg){ return reg.pushManager.getSubscription(); })
+      .then(function(sub){ if (sub) return send(c, sub.toJSON(), true).then(function(){ put({on:true, at:Date.now()}); }); }).catch(function(){});
+  }
+  return {state:state, enable:enable, refresh:refresh};
+})();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+["2026-11-21-8/", "2026-11-21-7/", "2026-11-21-6/", "2026-11-21-5/", "2026-11-21-4/", "2026-11-21-3/", "2026-11-21-2/", "2026-11-21/", "2026-11-20-8/", "2026-11-20-7/", "2026-11-20-6/", "2026-11-20-5/", "2026-11-20-4/", "2026-11-20-3/", "2026-11-20-2/", "2026-11-20/", "2026-11-19-8/", "2026-11-19-7/", "2026-11-19-6/", "2026-11-19-5/", "2026-11-19-4/", "2026-11-19-3/", "2026-11-19-2/", "2026-11-19/", "2026-11-18-8/", "2026-11-18-7/", "2026-11-18-6/", "2026-11-18-5/", "2026-11-18-4/", "2026-11-18-3/", "2026-11-18-2/", "2026-11-18/", "2026-11-17-8/", "2026-11-17-7/", "2026-11-17-6/", "2026-11-17-5/", "2026-11-17-4/", "2026-11-17-3/", "2026-11-17-2/", "2026-11-17/", "2026-11-16-8/", "2026-11-16-7/", "2026-11-16-6/", "2026-11-16-5/", "2026-11-16-4/", "2026-11-16-3/", "2026-11-16-2/", "2026-11-16/", "2026-11-15-8/", "2026-11-15-7/", "2026-11-15-6/", "2026-11-15-5/", "2026-11-15-4/", "2026-11-15-3/", "2026-11-15-2/", "2026-11-15/", "p/2026-11-21-8/", "p/2026-11-21-7/", "p/2026-11-21-6/", "p/2026-11-21-5/", "p/2026-11-21-4/", "p/2026-11-21-3/", "p/2026-11-21-2/", "p/2026-11-21/", "p/2026-11-20-8/", "p/2026-11-20-7/", "p/2026-11-20-6/", "p/2026-11-20-5/", "p/2026-11-20-4/", "p/2026-11-20-3/", "p/2026-11-20-2/", "p/2026-11-20/", "p/2026-11-19-8/", "p/2026-11-19-7/", "p/2026-11-19-6/", "p/2026-11-19-5/", "p/2026-11-19-4/", "p/2026-11-19-3/", "p/2026-11-19-2/", "p/2026-11-19/", "p/2026-11-18-8/", "p/2026-11-18-7/", "p/2026-11-18-6/", "p/2026-11-18-5/", "p/2026-11-18-4/", "p/2026-11-18-3/", "p/2026-11-18-2/", "p/2026-11-18/", "p/2026-11-17-8/", "p/2026-11-17-7/", "p/2026-11-17-6/", "p/2026-11-17-5/", "p/2026-11-17-4/", "p/2026-11-17-3/", "p/2026-11-17-2/", "p/2026-11-17/", "p/2026-11-16-8/", "p/2026-11-16-7/", "p/2026-11-16-6/", "p/2026-11-16-5/", "p/2026-11-16-4/", "p/2026-11-16-3/", "p/2026-11-16-2/", "p/2026-11-16/", "p/2026-11-15-8/", "p/2026-11-15-7/", "p/2026-11-15-6/", "p/2026-11-15-5/", "p/2026-11-15-4/", "p/2026-11-15-3/", "p/2026-11-15-2/", "p/2026-11-15/"].forEach(function(d){ fetch(d).catch(function(){}); });
+(function(){ var c = {"key": "BCZ9-f4Drzx2GlDytcp4MbDZPuIq8G8lTIMH1F_mLjnu5Jbn6KKHR5JdPFHhw1meaO01f9zRzlgiwzGk5JJuv4I", "inbox": "https://script.google.com/macros/s/AKfycbzJiuqh388c4Y-_c4n3BR5s_5miWaOsvQ4gWm5wrQVUPAhQKwlgviw2wja6-0na9E1Qog/exec", "token": "CeDnIje2Gb59"}, b = document.getElementById('rem'), s = KUPPUSH.state(c); if (s === 'on') KUPPUSH.refresh(c); if (s !== 'off' || !b) return; b.hidden = false; b.onclick = function(){ b.disabled = true; b.textContent = 'Turning on...'; KUPPUSH.enable(c, function(ok){ b.textContent = ok ? 'Reminders are on' : 'Could not turn on reminders'; b.disabled = !!ok; }); }; })();
+</script></body></html>
